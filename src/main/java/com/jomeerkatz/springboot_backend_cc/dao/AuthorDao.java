@@ -1,6 +1,6 @@
 package com.jomeerkatz.springboot_backend_cc.dao;
 
-import org.springframework.jdbc.core.JdbcTemplate;
-
+import com.jomeerkatz.springboot_backend_cc.domain.Author;
 public interface AuthorDao  {
+    void create(Author author);
 }
