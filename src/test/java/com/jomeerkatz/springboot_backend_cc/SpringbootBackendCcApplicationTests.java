@@ -1,0 +1,13 @@
+package com.jomeerkatz.springboot_backend_cc;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class SpringbootBackendCcApplicationTests {
+
+	@Test
+	void contextLoads() {
+	}
+
+}
