@@ -1,9 +1,9 @@
-package com.jomeerkatz.springboot_backend_cc.dao;
+package com.jomeerkatz.springboot_backend_cc.dao.impl;
 
-import com.jomeerkatz.springboot_backend_cc.dao.impl.BookDaoImpl;
 import com.jomeerkatz.springboot_backend_cc.domain.Book;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -35,6 +35,17 @@ public class BookDaoImpTests {
                 eq("isbn-123"),
                 eq("book-title-test"),
                 eq(1L)
+        );
+    }
+
+    @Test
+    public void testThatCreatesCorrecSqlReadOneBook(){
+        bookDaoImplUnderTest.getBookByIsbn("test-isbn");
+
+        verify(jdbcTemplate).query(
+                eq("SELECT isbn, title, author_id FROM books WHERE isbn = ? LIMIT 1"),
+                ArgumentMatchers.<BookDaoImpl.BookRowMapper>any(),
+                eq("test-isbn")
         );
     }
 
