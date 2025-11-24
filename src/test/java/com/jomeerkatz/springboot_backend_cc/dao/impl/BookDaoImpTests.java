@@ -1,6 +1,7 @@
 package com.jomeerkatz.springboot_backend_cc.dao.impl;
 
 import com.jomeerkatz.springboot_backend_cc.domain.Book;
+import com.jomeerkatz.springboot_backend_cc.utils.TestDataUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
@@ -22,11 +23,7 @@ public class BookDaoImpTests {
 
     @Test
     public void testThatCreateBookGeneratesCorrectSql(){
-        Book book = Book.builder()
-                .isbn("isbn-123")
-                .title("book-title-test")
-                .author_id(1L)
-                .build();
+        Book book = TestDataUtil.createTestBook();
 
         bookDaoImplUnderTest.create(book);
 
