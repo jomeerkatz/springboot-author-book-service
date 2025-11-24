@@ -1,5 +1,6 @@
 package com.jomeerkatz.springboot_backend_cc.dao.impl;
 
+import com.jomeerkatz.springboot_backend_cc.utils.TestDataUtil;
 import com.jomeerkatz.springboot_backend_cc.domain.Author;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,11 +23,7 @@ public class AuthorDaoImplTests {
 
     @Test
     public void testThatCreateAuthorGeneratesCorrectSql(){
-        Author author = Author.builder()
-                .id(1L)
-                .age(80)
-                .name("testname")
-                .build();
+        Author author = TestDataUtil.createTestAuthor();
 
         authorDaoImplUnderTest.create(author);
 
