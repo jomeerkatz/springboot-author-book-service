@@ -52,6 +52,11 @@ public class AuthorDaoImpl implements AuthorDao {
                     .build();
         }
     }
+
+    @Override
+    public List<Author> findAllAuthors() {
+        return jdbcTemplate.query("SELECT id, name, age FROM authors", new AuthorRowMapper());
+    }
 }
 
 

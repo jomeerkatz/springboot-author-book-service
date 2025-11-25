@@ -51,4 +51,12 @@ public class BookDaoImpl implements BookDao {
                     .build();
         }
     }
+
+    @Override
+    public List<Book> findAllBooks() {
+        return jdbcTemplate.query(
+                "SELECT isbn, title, author_id FROM books",
+                new BookRowMapper()
+        );
+    }
 }
