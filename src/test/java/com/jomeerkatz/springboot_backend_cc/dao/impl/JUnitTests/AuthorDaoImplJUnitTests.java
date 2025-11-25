@@ -1,5 +1,6 @@
-package com.jomeerkatz.springboot_backend_cc.dao.impl;
+package com.jomeerkatz.springboot_backend_cc.dao.impl.JUnitTests;
 
+import com.jomeerkatz.springboot_backend_cc.dao.impl.AuthorDaoImpl;
 import com.jomeerkatz.springboot_backend_cc.utils.TestDataUtil;
 import com.jomeerkatz.springboot_backend_cc.domain.Author;
 import org.junit.jupiter.api.Test;
@@ -14,7 +15,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-public class AuthorDaoImplTests {
+public class AuthorDaoImplJUnitTests {
     @Mock
     private JdbcTemplate jdbcTemplate; // just for AuthorDaoImpl -> injections
 
@@ -45,4 +46,13 @@ public class AuthorDaoImplTests {
         );
     }
 
+    @Test
+    public void testThatCreateCorrectSQLReadManyAuthors() {
+        authorDaoImplUnderTest.findAllAuthors();
+
+        verify(jdbcTemplate).query(
+                eq("SELECT id, name, age FROM authors"),
+                ArgumentMatchers.<AuthorDaoImpl.AuthorRowMapper>any()
+        );
+    }
 }

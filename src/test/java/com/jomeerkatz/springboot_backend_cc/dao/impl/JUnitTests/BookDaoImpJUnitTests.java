@@ -1,5 +1,6 @@
-package com.jomeerkatz.springboot_backend_cc.dao.impl;
+package com.jomeerkatz.springboot_backend_cc.dao.impl.JUnitTests;
 
+import com.jomeerkatz.springboot_backend_cc.dao.impl.BookDaoImpl;
 import com.jomeerkatz.springboot_backend_cc.domain.Book;
 import com.jomeerkatz.springboot_backend_cc.utils.TestDataUtil;
 import org.junit.jupiter.api.Test;
@@ -14,7 +15,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-public class BookDaoImpTests {
+public class BookDaoImpJUnitTests {
     @Mock
     private JdbcTemplate jdbcTemplate;
 
@@ -43,6 +44,16 @@ public class BookDaoImpTests {
                 eq("SELECT isbn, title, author_id FROM books WHERE isbn = ? LIMIT 1"),
                 ArgumentMatchers.<BookDaoImpl.BookRowMapper>any(),
                 eq("test-isbn")
+        );
+    }
+
+    @Test
+    public void testThatCreateCorrectSQLReadManyBooks() {
+        bookDaoImplUnderTest.findAllBooks();
+
+        verify(jdbcTemplate).query(
+                eq("SELECT isbn, title, author_id FROM books"),
+                ArgumentMatchers.<BookDaoImpl.BookRowMapper>any()
         );
     }
 
