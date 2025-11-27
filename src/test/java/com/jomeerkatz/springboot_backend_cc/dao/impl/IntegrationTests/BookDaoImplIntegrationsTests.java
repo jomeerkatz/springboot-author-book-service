@@ -84,9 +84,7 @@ public class BookDaoImplIntegrationsTests {
         assertThat(bookList).containsExactly(book, bookSecond, bookThird);
 
     }
-
-    // todo: implement integration test for full update for books
-
+    
     @Test
     public void TestThatUpdatesExistingBook() {
         Book book = TestDataUtil.createTestBook();

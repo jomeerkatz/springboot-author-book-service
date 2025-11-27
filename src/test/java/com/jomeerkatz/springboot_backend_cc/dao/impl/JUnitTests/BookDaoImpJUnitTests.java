@@ -58,8 +58,6 @@ public class BookDaoImpJUnitTests {
         );
     }
 
-    // todo: implement junit test for full update for books
-
     @Test
     public void testThatCreateCorrectSQLUpdateAllBooks() {
         // when writing junit tests, we just want to check if the sql query was right?
