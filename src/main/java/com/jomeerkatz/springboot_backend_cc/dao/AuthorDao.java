@@ -9,5 +9,5 @@ public interface AuthorDao  {
     void create(Author author);
     Optional<Author> getAuthorById(Long id);
     List<Author> findAllAuthors();
-
+    void update(Author author, Long id);
 }
