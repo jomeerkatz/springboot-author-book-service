@@ -84,6 +84,30 @@ public class BookDaoImplIntegrationsTests {
         assertThat(bookList).containsExactly(book, bookSecond, bookThird);
 
     }
+
+    // todo: implement integration test for full update for books
+
+    @Test
+    public void TestThatUpdatesExistingBook() {
+        Book book = TestDataUtil.createTestBook();
+        Author author = TestDataUtil.createTestAuthor();
+        authorDaoImpl.create(author);
+        book.setAuthor_id(author.getId());
+        bookDaoImplUnderTest.create(book);
+        Author authorSecond = TestDataUtil.createTestAuthorSecond();
+        authorDaoImpl.create(authorSecond);
+
+        book.setAuthor_id(authorSecond.getId()); // update author ID
+        book.setTitle("updated-title");
+
+        bookDaoImplUnderTest.update(book, book.getIsbn());
+
+        Optional<Book> result = bookDaoImplUnderTest.getBookByIsbn(book.getIsbn());
+
+        assertThat(result.isPresent());
+
+        assertThat(result.get()).isEqualTo(book); // we have to use get(), bec right now Optional<Book> is a collection/kind of list -> get one element
+    }
 }
 
 

@@ -1,6 +1,7 @@
 package com.jomeerkatz.springboot_backend_cc.dao.impl.JUnitTests;
 
 import com.jomeerkatz.springboot_backend_cc.dao.impl.BookDaoImpl;
+import com.jomeerkatz.springboot_backend_cc.domain.Author;
 import com.jomeerkatz.springboot_backend_cc.domain.Book;
 import com.jomeerkatz.springboot_backend_cc.utils.TestDataUtil;
 import org.junit.jupiter.api.Test;
@@ -54,6 +55,23 @@ public class BookDaoImpJUnitTests {
         verify(jdbcTemplate).query(
                 eq("SELECT isbn, title, author_id FROM books"),
                 ArgumentMatchers.<BookDaoImpl.BookRowMapper>any()
+        );
+    }
+
+    // todo: implement junit test for full update for books
+
+    @Test
+    public void testThatCreateCorrectSQLUpdateAllBooks() {
+        // when writing junit tests, we just want to check if the sql query was right?
+        Book book = TestDataUtil.createTestBook();
+        bookDaoImplUnderTest.update(book, "isbn-123");
+
+        verify(jdbcTemplate).update(
+                eq("UPDATE books SET isbn = ?, title = ?, author_id = ? WHERE isbn = ?"),
+                eq(book.getIsbn()),
+                eq(book.getTitle()),
+                eq(book.getAuthor_id()),
+                eq(book.getIsbn())
         );
     }
 
