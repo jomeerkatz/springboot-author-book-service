@@ -1,4 +1,4 @@
-package com.jomeerkatz.springboot_backend_cc.utils;
+package com.jomeerkatz.springboot_backend_cc;
 
 import com.jomeerkatz.springboot_backend_cc.domain.Author;
 import com.jomeerkatz.springboot_backend_cc.domain.Book;
