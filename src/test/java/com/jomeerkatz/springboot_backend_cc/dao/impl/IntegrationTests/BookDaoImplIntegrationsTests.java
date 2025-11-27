@@ -106,6 +106,21 @@ public class BookDaoImplIntegrationsTests {
 
         assertThat(result.get()).isEqualTo(book); // we have to use get(), bec right now Optional<Book> is a collection/kind of list -> get one element
     }
+
+    @Test
+    public void TestThatDeletesExistingBook(){
+        Author author = TestDataUtil.createTestAuthor();
+        authorDaoImpl.create(author);
+        Book book = TestDataUtil.createTestBook();
+        book.setAuthor_id(author.getId());
+        bookDaoImplUnderTest.create(book);
+
+        bookDaoImplUnderTest.deleteBookByIsbn(book.getIsbn());
+
+        Optional<Book> result = bookDaoImplUnderTest.getBookByIsbn(book.getIsbn());
+
+        assertThat(result).isEmpty();
+    }
 }
 
 
