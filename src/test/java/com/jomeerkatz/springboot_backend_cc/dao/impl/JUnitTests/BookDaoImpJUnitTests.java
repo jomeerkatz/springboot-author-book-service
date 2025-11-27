@@ -73,4 +73,14 @@ public class BookDaoImpJUnitTests {
         );
     }
 
+    @Test
+    public void testThatCreateCorrectSQLDeleteBookByIsbn(){
+        bookDaoImplUnderTest.deleteBookByIsbn("test-isbn");
+
+        verify(jdbcTemplate).update(
+                eq("DELETE FROM books WHERE isbn = ?"),
+                eq("test-isbn")
+        );
+    }
+
 }

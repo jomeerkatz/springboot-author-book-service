@@ -10,4 +10,5 @@ public interface BookDao {
     Optional<Book> getBookByIsbn(String isbn);
     List<Book> findAllBooks();
     void update(Book book, String isbn);
+    void deleteBookByIsbn(String isbn);
 }
