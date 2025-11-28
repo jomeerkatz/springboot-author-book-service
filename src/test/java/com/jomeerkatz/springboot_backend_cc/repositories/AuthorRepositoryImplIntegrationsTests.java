@@ -85,5 +85,37 @@ public class AuthorRepositoryImplIntegrationsTests {
 
         assertThat(result).isEmpty();
     }
+
+    @Test
+    public void TestThatAuthorsUnder80Recalled(){
+        Author firstAuthor = TestDataUtil.createTestAuthor();
+        Author secondAuthor = TestDataUtil.createTestAuthorSecond();
+        Author thirdAuthor = TestDataUtil.createTestAuthorThird();
+
+        Author result1 = authorDaoUnderTest.save(firstAuthor);
+        Author result2 = authorDaoUnderTest.save(secondAuthor);
+        Author result3 = authorDaoUnderTest.save(thirdAuthor);
+
+        Iterable<Author> result = authorDaoUnderTest.ageLessThan(80);
+
+        assertThat(result).hasSize(2);
+        assertThat(result).containsExactly(result2, result3);
+    }
+
+    @Test
+    public void TestThatAuthorsGreater30Recalled(){
+        Author firstAuthor = TestDataUtil.createTestAuthor();
+        Author secondAuthor = TestDataUtil.createTestAuthorSecond();
+        Author thirdAuthor = TestDataUtil.createTestAuthorThird();
+
+        Author result1 = authorDaoUnderTest.save(firstAuthor);
+        Author result2 = authorDaoUnderTest.save(secondAuthor);
+        Author result3 = authorDaoUnderTest.save(thirdAuthor);
+
+        Iterable<Author> result = authorDaoUnderTest.findAuthorWithAgeGreaterThan(30);
+
+        assertThat(result).hasSize(2);
+        assertThat(result).containsExactly(result1, result3);
+    }
 }
 
