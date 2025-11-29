@@ -10,14 +10,14 @@ import javax.sql.DataSource;
 
 @SpringBootApplication
 @Log
-public class SpringbootBackendCcApplication implements CommandLineRunner {
+public class BooksApiApplication implements CommandLineRunner {
 
     private final DataSource datasource;
 
-    public SpringbootBackendCcApplication(final DataSource datasource) {this.datasource = datasource;}
+    public BooksApiApplication(final DataSource datasource) {this.datasource = datasource;}
 
 	public static void main(String[] args) {
-		SpringApplication.run(SpringbootBackendCcApplication.class, args);
+		SpringApplication.run(BooksApiApplication.class, args);
 	}
 
     public void run(final String ...args) {

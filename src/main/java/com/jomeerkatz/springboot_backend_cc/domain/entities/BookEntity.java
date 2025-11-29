@@ -1,6 +1,5 @@
-package com.jomeerkatz.springboot_backend_cc.domain;
+package com.jomeerkatz.springboot_backend_cc.domain.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,12 +12,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 @Table(name="books")
-public class Book {
+public class BookEntity {
     @Id
     private String isbn;
     private String title;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "author_id")
-    private Author author;
+    private AuthorEntity authorEntity;
 }

@@ -1,9 +1,9 @@
 package com.jomeerkatz.springboot_backend_cc.repository;
 
-import com.jomeerkatz.springboot_backend_cc.domain.Book;
+import com.jomeerkatz.springboot_backend_cc.domain.entities.BookEntity;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface BookRepository extends CrudRepository<Book, String> {
+public interface BookRepository extends CrudRepository<BookEntity, String> {
 }
