@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.awt.print.Book;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.StreamSupport;
 
 @Service
@@ -27,5 +28,10 @@ public class BookServiceImpl implements BookService {
     @Override
     public List<BookEntity> getAllBooks() {
         return StreamSupport.stream(bookRepository.findAll().spliterator(), false).toList();
+    }
+
+    @Override
+    public Optional<BookEntity> getById(String isbn) {
+        return bookRepository.findById(isbn);
     }
 }
