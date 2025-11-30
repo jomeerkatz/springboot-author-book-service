@@ -4,7 +4,6 @@ import com.jomeerkatz.springboot_backend_cc.domain.entities.AuthorEntity;
 import com.jomeerkatz.springboot_backend_cc.repository.AuthorRepository;
 import com.jomeerkatz.springboot_backend_cc.service.AuthorService;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
@@ -18,7 +17,7 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public AuthorEntity createAuthor(AuthorEntity newAuthorEntity) {
+    public AuthorEntity save(AuthorEntity newAuthorEntity) {
         return authorRepository.save(newAuthorEntity);
     }
 
@@ -28,7 +27,12 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public Optional<AuthorEntity> getById(Long id) {
+    public Optional<AuthorEntity> getAuthorById(Long id) {
         return authorRepository.findById(id);
+    }
+
+    @Override
+    public boolean idExists(Long id) {
+        return authorRepository.existsById(id);
     }
 }

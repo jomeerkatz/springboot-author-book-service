@@ -80,8 +80,8 @@ public class AuthorControllerIntegrationTests {
         AuthorEntity authorEntityFirst = TestDataUtil.createTestAuthor();
         AuthorEntity authorEntitySecond = TestDataUtil.createTestAuthorSecond();
 
-        authorService.createAuthor(authorEntityFirst);
-        authorService.createAuthor(authorEntitySecond);
+        authorService.save(authorEntityFirst);
+        authorService.save(authorEntitySecond);
 
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/authors")
@@ -104,7 +104,7 @@ public class AuthorControllerIntegrationTests {
     @Test
     public void testThatGetAuthorByIdSuccessfullyReturnsHttp200ok() throws Exception {
         AuthorEntity authorEntity = TestDataUtil.createTestAuthor();
-        AuthorEntity resultEntity = authorService.createAuthor(authorEntity);
+        AuthorEntity resultEntity = authorService.save(authorEntity);
 
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/authors/" + resultEntity.getId())
@@ -127,7 +127,7 @@ public class AuthorControllerIntegrationTests {
     @Test
     public void testThatGetAuthorByIdSuccessfullyTestBody() throws Exception {
         AuthorEntity authorEntityFirst = TestDataUtil.createTestAuthor();
-        AuthorEntity authorEntityResult = authorService.createAuthor(authorEntityFirst);
+        AuthorEntity authorEntityResult = authorService.save(authorEntityFirst);
 
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/authors/" + authorEntityResult.getId())
@@ -138,6 +138,70 @@ public class AuthorControllerIntegrationTests {
                 MockMvcResultMatchers.jsonPath("$.age").value(authorEntityFirst.getAge())
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.name").value(authorEntityFirst.getName())
+        );
+    }
+
+    @Test
+    public void testThatFullUpdatesAuthorSuccessfullyReturnsHttp200Ok() throws Exception {
+        AuthorEntity authorEntity = TestDataUtil.createTestAuthor();
+        AuthorEntity resultEntity = authorService.save(authorEntity); // author has an ID
+
+        AuthorEntity authorEntitySecond = TestDataUtil.createTestAuthorSecond();
+
+        authorEntitySecond.setId(resultEntity.getId());
+
+        String jsonAuthorEntityUpdated = objectMapper.writeValueAsString(authorEntitySecond);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.put("/authors/" + resultEntity.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonAuthorEntityUpdated)
+        ).andExpect(
+                MockMvcResultMatchers.status().isOk()
+        );
+    }
+
+    @Test
+    public void testThatTriesFullUpdatesAuthorButIdNotFoundReturnsHttp404NotFound() throws Exception {
+        AuthorEntity authorEntity = TestDataUtil.createTestAuthor();
+        AuthorEntity resultEntity = authorService.save(authorEntity); // author has an ID
+
+        AuthorEntity authorEntitySecond = TestDataUtil.createTestAuthorSecond();
+
+        authorEntitySecond.setId(0L);
+
+        String jsonAuthorEntityUpdated = objectMapper.writeValueAsString(authorEntitySecond);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.put("/authors/" + authorEntitySecond.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonAuthorEntityUpdated)
+        ).andExpect(
+                MockMvcResultMatchers.status().isNotFound()
+        );
+    }
+
+    @Test
+    public void testThatFullUpdateReturnsUpdatedAuthorSuccessfullyCheckBodyOk() throws Exception {
+        AuthorEntity authorEntity = TestDataUtil.createTestAuthor();
+        AuthorEntity resultEntity = authorService.save(authorEntity); // author has an ID
+
+        AuthorEntity authorEntitySecond = TestDataUtil.createTestAuthorSecond();
+
+        authorEntitySecond.setId(resultEntity.getId());
+
+        String jsonAuthorEntityUpdated = objectMapper.writeValueAsString(authorEntitySecond);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.put("/authors/" + resultEntity.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonAuthorEntityUpdated)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.id").value(resultEntity.getId())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.age").value(authorEntitySecond.getAge())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.name").value(authorEntitySecond.getName())
         );
     }
 }
