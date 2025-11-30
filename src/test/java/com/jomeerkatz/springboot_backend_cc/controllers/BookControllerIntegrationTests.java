@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import tools.jackson.databind.ObjectMapper;
 
+
 @AutoConfigureMockMvc
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -37,67 +38,75 @@ public class BookControllerIntegrationTests {
     }
 
     @Test
-    public void testThatCreatesBookReturnsHttpStatus201Created() throws Exception{
+    public void testThatCreatesBookReturnsHttpStatus201Created() throws Exception {
         BookDto bookDto = TestDataUtil.createTestBookDto(null);
         String jsonBookDto = objectMapper.writeValueAsString(bookDto);
-        mockMvc.perform(
-                MockMvcRequestBuilders.put("/books/" + bookDto.getIsbn()) // we do this, bec we want to
-                        // act like it is a real request. and a real request will have as a pathvariable an isbn
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(jsonBookDto)
-        ).andExpect(
+        mockMvc.perform(MockMvcRequestBuilders.put("/books/" + bookDto.getIsbn()) // we do this, bec we want to
+                // act like it is a real request. and a real request will have as a pathvariable an isbn
+                .contentType(MediaType.APPLICATION_JSON).content(jsonBookDto)).andExpect(
                 // what should we get back?
-                MockMvcResultMatchers.status().isCreated()
-        );
+                MockMvcResultMatchers.status().isCreated());
     }
 
     @Test
-    public void testThatCreatesBookReturnsCreatedBook() throws Exception{
+    public void testThatCreatesBookReturnsCreatedBook() throws Exception {
         BookDto bookDto = TestDataUtil.createTestBookDto(null);
         String jsonBookDto = objectMapper.writeValueAsString(bookDto);
-        mockMvc.perform(
-                MockMvcRequestBuilders.put("/books/" + bookDto.getIsbn()) // we do this, bec we want to
-                        // act like it is a real request. and a real request will have as a pathvariable an isbn
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(jsonBookDto)
-        ).andExpect(
+        mockMvc.perform(MockMvcRequestBuilders.put("/books/" + bookDto.getIsbn()) // we do this, bec we want to
+                // act like it is a real request. and a real request will have as a pathvariable an isbn
+                .contentType(MediaType.APPLICATION_JSON).content(jsonBookDto)).andExpect(
                 // what should be inside the body?
-                MockMvcResultMatchers.jsonPath("$.isbn").value(bookDto.getIsbn())
-        ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.title").value(bookDto.getTitle())
-        );
+                MockMvcResultMatchers.jsonPath("$.isbn").value(bookDto.getIsbn())).andExpect(MockMvcResultMatchers.jsonPath("$.title").value(bookDto.getTitle()));
     }
 
     @Test
-    public void testThatGetAllBooksReturnsHttpStatus200Ok() throws Exception{
-        mockMvc.perform(
-                MockMvcRequestBuilders.get("/books")
-                        .contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(
+    public void testThatGetAllBooksReturnsHttpStatus200Ok() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/books").contentType(MediaType.APPLICATION_JSON)).andExpect(
                 // what should we get back?
-                MockMvcResultMatchers.status().isOk()
-        );
+                MockMvcResultMatchers.status().isOk());
     }
 
     @Test
-    public void testThatChecksReturnBodyFromGetAllBooks() throws Exception{
+    public void testThatChecksReturnBodyFromGetAllBooks() throws Exception {
         BookEntity bookEntityFirst = TestDataUtil.createTestBook(null);
         BookEntity bookEntitySecond = TestDataUtil.createTestBookSecond(null);
 
         bookService.createBook(bookEntityFirst, bookEntityFirst.getIsbn());
         bookService.createBook(bookEntitySecond, bookEntitySecond.getIsbn());
 
-        mockMvc.perform(
-                MockMvcRequestBuilders.get("/books")
-                        .contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(
-                MockMvcResultMatchers.jsonPath("$[0].isbn").value(bookEntityFirst.getIsbn())
-        ).andExpect(
-                MockMvcResultMatchers.jsonPath("$[0].title").value(bookEntityFirst.getTitle())
-        ).andExpect(
-                MockMvcResultMatchers.jsonPath("$[1].isbn").value(bookEntitySecond.getIsbn())
-        ).andExpect(
-                MockMvcResultMatchers.jsonPath("$[1].title").value(bookEntitySecond.getTitle())
-        );
+        mockMvc.perform(MockMvcRequestBuilders.get("/books").contentType(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.jsonPath("$[0].isbn").value(bookEntityFirst.getIsbn())).andExpect(MockMvcResultMatchers.jsonPath("$[0].title").value(bookEntityFirst.getTitle())).andExpect(MockMvcResultMatchers.jsonPath("$[1].isbn").value(bookEntitySecond.getIsbn())).andExpect(MockMvcResultMatchers.jsonPath("$[1].title").value(bookEntitySecond.getTitle()));
     }
+
+    @Test
+    public void testThatGetBookByIsbnReturnsHttpStatus200Ok() throws Exception {
+        BookEntity bookEntity = TestDataUtil.createTestBook(null);
+        BookEntity resultBookEntity = bookService.createBook(bookEntity, bookEntity.getIsbn());
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/books/" + resultBookEntity.getIsbn())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    public void testThatTriesToGetBookByIsbnReturnsHttpStatus404NotFound () throws Exception {
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/books/" + "1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+    @Test
+    public void testThatChecksReturnBodyFromGetBookByIsbn() throws Exception {
+        BookEntity bookEntity = TestDataUtil.createTestBook(null);
+
+        bookService.createBook(bookEntity, bookEntity.getIsbn());
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/books/" + bookEntity.getIsbn())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.isbn")
+                        .value(bookEntity.getIsbn()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.title")
+                        .value(bookEntity.getTitle()));
+    }
+
 }

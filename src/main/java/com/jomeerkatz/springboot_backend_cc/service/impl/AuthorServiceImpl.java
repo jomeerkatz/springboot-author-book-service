@@ -6,12 +6,12 @@ import com.jomeerkatz.springboot_backend_cc.service.AuthorService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 import java.util.stream.StreamSupport;
 
 @Service
 public class AuthorServiceImpl implements AuthorService {
-    private AuthorRepository authorRepository;
+    private final AuthorRepository authorRepository;
 
     public AuthorServiceImpl(final AuthorRepository authorRepository){
         this.authorRepository = authorRepository;
@@ -25,5 +25,10 @@ public class AuthorServiceImpl implements AuthorService {
     @Override
     public List<AuthorEntity> getAllAuthors() {
         return StreamSupport.stream(authorRepository.findAll().spliterator(),false).toList();
+    }
+
+    @Override
+    public Optional<AuthorEntity> getById(Long id) {
+        return authorRepository.findById(id);
     }
 }

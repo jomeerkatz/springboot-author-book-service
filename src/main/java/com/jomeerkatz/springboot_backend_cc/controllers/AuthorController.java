@@ -6,12 +6,10 @@ import com.jomeerkatz.springboot_backend_cc.mappers.Mapper;
 import com.jomeerkatz.springboot_backend_cc.service.AuthorService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -41,5 +39,13 @@ public class AuthorController {
                 .stream()
                 .map(authorMapper::mapTo)
                 .toList();
+    }
+
+    @GetMapping( path = "/authors/{id}")
+    public ResponseEntity<AuthorDto> getAuthorById(@PathVariable("id") Long id) {
+        Optional<AuthorEntity> result = authorService.getById(id);
+        return result.map(resultAuthorEntity -> new ResponseEntity<>(authorMapper.mapTo(resultAuthorEntity), HttpStatus.OK)).orElse(
+                new ResponseEntity<>(HttpStatus.NOT_FOUND)
+        );
     }
 }

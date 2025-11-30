@@ -29,7 +29,7 @@ public class AuthorControllerIntegrationTests {
     private MockMvc mockMvc;
 
     @Autowired
-    public AuthorControllerIntegrationTests (final MockMvc mockMvc, AuthorServiceImpl authorService) {
+    public AuthorControllerIntegrationTests(final MockMvc mockMvc, AuthorServiceImpl authorService) {
         this.mockMvc = mockMvc;
         this.objectMapper = new ObjectMapper();
         this.authorService = authorService;
@@ -76,7 +76,7 @@ public class AuthorControllerIntegrationTests {
     }
 
     @Test
-    public void testThatGetAllAuthorsSuccessfullyReturnsAuthorList() throws Exception{
+    public void testThatGetAllAuthorsSuccessfullyReturnsAuthorList() throws Exception {
         AuthorEntity authorEntityFirst = TestDataUtil.createTestAuthor();
         AuthorEntity authorEntitySecond = TestDataUtil.createTestAuthorSecond();
 
@@ -98,6 +98,46 @@ public class AuthorControllerIntegrationTests {
                 MockMvcResultMatchers.jsonPath("$[1].age").value(authorEntitySecond.getAge())
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$[1].name").value(authorEntitySecond.getName())
+        );
+    }
+
+    @Test
+    public void testThatGetAuthorByIdSuccessfullyReturnsHttp200ok() throws Exception {
+        AuthorEntity authorEntity = TestDataUtil.createTestAuthor();
+        AuthorEntity resultEntity = authorService.createAuthor(authorEntity);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/authors/" + resultEntity.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.status().isOk()
+        );
+    }
+
+    @Test
+    public void testThatTriesToGetAuthorByIdReturnsHttp404NotFound() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/authors/" + "1")
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.status().isNotFound()
+        );
+    }
+
+    @Test
+    public void testThatGetAuthorByIdSuccessfullyTestBody() throws Exception {
+        AuthorEntity authorEntityFirst = TestDataUtil.createTestAuthor();
+        AuthorEntity authorEntityResult = authorService.createAuthor(authorEntityFirst);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/authors/" + authorEntityResult.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.id").isNumber()
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.age").value(authorEntityFirst.getAge())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.name").value(authorEntityFirst.getName())
         );
     }
 }

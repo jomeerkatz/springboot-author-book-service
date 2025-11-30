@@ -4,11 +4,13 @@ import com.jomeerkatz.springboot_backend_cc.domain.dto.BookDto;
 import com.jomeerkatz.springboot_backend_cc.domain.entities.BookEntity;
 import com.jomeerkatz.springboot_backend_cc.mappers.Mapper;
 import com.jomeerkatz.springboot_backend_cc.service.BookService;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @RestController
@@ -39,5 +41,13 @@ public class BookController {
                 .stream()
                 .map(modelMapper::mapTo)
                 .toList();
+    }
+
+    @GetMapping("/books/{isbn}")
+    public ResponseEntity<BookDto> getBookById(@PathVariable String isbn){
+        Optional<BookEntity> result = bookService.getById(isbn);
+        return result.map(resultBookEntity -> new ResponseEntity<>(modelMapper.mapTo(resultBookEntity), HttpStatus.OK)).orElse(
+                new ResponseEntity<>(HttpStatus.NOT_FOUND)
+        );
     }
 }
