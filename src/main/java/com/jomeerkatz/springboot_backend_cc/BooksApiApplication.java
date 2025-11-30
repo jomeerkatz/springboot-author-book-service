@@ -25,5 +25,4 @@ public class BooksApiApplication implements CommandLineRunner {
         final JdbcTemplate jdbcTemplate = new JdbcTemplate(datasource);
         jdbcTemplate.execute("select 1");
     }
-
 }

@@ -2,6 +2,8 @@ package com.jomeerkatz.springboot_backend_cc.controllers;
 
 import com.jomeerkatz.springboot_backend_cc.TestDataUtil;
 import com.jomeerkatz.springboot_backend_cc.domain.dto.BookDto;
+import com.jomeerkatz.springboot_backend_cc.domain.entities.BookEntity;
+import com.jomeerkatz.springboot_backend_cc.service.impl.BookServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,14 +23,17 @@ import tools.jackson.databind.ObjectMapper;
 @ExtendWith(SpringExtension.class)
 public class BookControllerIntegrationTests {
 
+    private BookServiceImpl bookService;
+
     private final MockMvc mockMvc;
 
     private ObjectMapper objectMapper;
 
     @Autowired
-    public BookControllerIntegrationTests(final MockMvc mockMvc) {
+    public BookControllerIntegrationTests(final MockMvc mockMvc, BookServiceImpl bookService) {
         this.mockMvc = mockMvc;
         this.objectMapper = new ObjectMapper();
+        this.bookService = bookService;
     }
 
     @Test
@@ -60,6 +65,39 @@ public class BookControllerIntegrationTests {
                 MockMvcResultMatchers.jsonPath("$.isbn").value(bookDto.getIsbn())
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.title").value(bookDto.getTitle())
+        );
+    }
+
+    @Test
+    public void testThatGetAllBooksReturnsHttpStatus200Ok() throws Exception{
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/books")
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                // what should we get back?
+                MockMvcResultMatchers.status().isOk()
+        );
+    }
+
+    @Test
+    public void testThatChecksReturnBodyFromGetAllBooks() throws Exception{
+        BookEntity bookEntityFirst = TestDataUtil.createTestBook(null);
+        BookEntity bookEntitySecond = TestDataUtil.createTestBookSecond(null);
+
+        bookService.createBook(bookEntityFirst, bookEntityFirst.getIsbn());
+        bookService.createBook(bookEntitySecond, bookEntitySecond.getIsbn());
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/books")
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].isbn").value(bookEntityFirst.getIsbn())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].title").value(bookEntityFirst.getTitle())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[1].isbn").value(bookEntitySecond.getIsbn())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[1].title").value(bookEntitySecond.getTitle())
         );
     }
 }

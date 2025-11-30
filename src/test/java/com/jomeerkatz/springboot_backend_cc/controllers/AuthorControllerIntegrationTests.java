@@ -2,6 +2,7 @@ package com.jomeerkatz.springboot_backend_cc.controllers;
 
 import com.jomeerkatz.springboot_backend_cc.TestDataUtil;
 import com.jomeerkatz.springboot_backend_cc.domain.entities.AuthorEntity;
+import com.jomeerkatz.springboot_backend_cc.service.impl.AuthorServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,14 +22,17 @@ import tools.jackson.databind.ObjectMapper;
 @AutoConfigureMockMvc
 public class AuthorControllerIntegrationTests {
 
+    private AuthorServiceImpl authorService;
+
     private ObjectMapper objectMapper;
 
     private MockMvc mockMvc;
 
     @Autowired
-    public AuthorControllerIntegrationTests (final MockMvc mockMvc) {
+    public AuthorControllerIntegrationTests (final MockMvc mockMvc, AuthorServiceImpl authorService) {
         this.mockMvc = mockMvc;
         this.objectMapper = new ObjectMapper();
+        this.authorService = authorService;
     }
 
     @Test
@@ -58,6 +62,42 @@ public class AuthorControllerIntegrationTests {
                 MockMvcResultMatchers.jsonPath("$.name").value(authorEntity.getName())
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.age").value(authorEntity.getAge())
+        );
+    }
+
+    @Test
+    public void testThatGetAllAuthorsSuccessfullyReturnsHttp200() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/authors")
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.status().isOk()
+        );
+    }
+
+    @Test
+    public void testThatGetAllAuthorsSuccessfullyReturnsAuthorList() throws Exception{
+        AuthorEntity authorEntityFirst = TestDataUtil.createTestAuthor();
+        AuthorEntity authorEntitySecond = TestDataUtil.createTestAuthorSecond();
+
+        authorService.createAuthor(authorEntityFirst);
+        authorService.createAuthor(authorEntitySecond);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/authors")
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].id").isNumber()
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].age").value(authorEntityFirst.getAge())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].name").value(authorEntityFirst.getName())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[1].id").isNumber()
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[1].age").value(authorEntitySecond.getAge())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[1].name").value(authorEntitySecond.getName())
         );
     }
 }
