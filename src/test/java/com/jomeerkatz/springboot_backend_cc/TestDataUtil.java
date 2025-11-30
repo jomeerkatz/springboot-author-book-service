@@ -54,10 +54,10 @@ public final class TestDataUtil {
                 .build();
     }
 
-    public static BookDto createTestBookDto(final AuthorDto authorDto) {
+    public static BookDto createTestBookDtoA(final AuthorDto authorDto) {
         return BookDto.builder()
-                .isbn("isbn-123")
-                .title("book-title-test")
+                .isbn("isbn-213")
+                .title("book-title-test-123")
                 .authorEntity(authorDto)
                 .build();
     }
