@@ -38,6 +38,25 @@ public class BookServiceImpl implements BookService {
     @Override
     public boolean isbnExists(String isbn) {
         return bookRepository.existsById(isbn);
+    }
+
+    @Override
+    public BookEntity partialUpdate(String isbn, BookEntity bookEntity) {
+        // here again, we already checked before in controller layer, if isbn is even existing
+        // get the actual record out of the db
+        // check what is not null in bookEntity
+        // then put it in
+        bookEntity.setIsbn(isbn);
+        return bookRepository.findById(isbn).map(existingBookEntity -> {
+            Optional.ofNullable(bookEntity.getTitle()).ifPresent(
+                    existingBookEntity::setTitle
+            );
+
+            // there is isbn -> which should not be updated
+            // there is author_id -> which also should not be updated??
+            return bookRepository.save(existingBookEntity);
+        }).orElseThrow(() -> new RuntimeException("book isbn doesn't exists!"));
+
 
     }
 }
