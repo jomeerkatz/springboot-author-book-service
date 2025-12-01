@@ -2,8 +2,9 @@ package com.jomeerkatz.springboot_backend_cc.repository;
 
 import com.jomeerkatz.springboot_backend_cc.domain.entities.BookEntity;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface BookRepository extends CrudRepository<BookEntity, String> {
+public interface BookRepository extends CrudRepository<BookEntity, String>, PagingAndSortingRepository<BookEntity, String> {
 }

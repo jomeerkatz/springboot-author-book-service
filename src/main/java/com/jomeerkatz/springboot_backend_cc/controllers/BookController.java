@@ -5,6 +5,8 @@ import com.jomeerkatz.springboot_backend_cc.domain.entities.BookEntity;
 import com.jomeerkatz.springboot_backend_cc.mappers.Mapper;
 import com.jomeerkatz.springboot_backend_cc.service.impl.BookServiceImpl;
 import org.apache.coyote.Response;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,12 +46,9 @@ public class BookController {
     }
 
     @GetMapping("/books")
-    public List<BookDto> getAllBooks() {
-        List<BookEntity> listResultBooks = bookService.getAllBooks();
-        return listResultBooks
-                .stream()
-                .map(modelMapper::mapTo)
-                .toList();
+    public Page<BookDto> getAllBooks(Pageable pageable) {
+        Page<BookEntity> listResultBooks = bookService.getAllBooks(pageable);
+        return listResultBooks.map(modelMapper::mapTo);
     }
 
     @GetMapping("/books/{isbn}")
