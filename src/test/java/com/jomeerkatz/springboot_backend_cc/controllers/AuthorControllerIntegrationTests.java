@@ -1,6 +1,7 @@
 package com.jomeerkatz.springboot_backend_cc.controllers;
 
 import com.jomeerkatz.springboot_backend_cc.TestDataUtil;
+import com.jomeerkatz.springboot_backend_cc.domain.dto.AuthorDto;
 import com.jomeerkatz.springboot_backend_cc.domain.entities.AuthorEntity;
 import com.jomeerkatz.springboot_backend_cc.service.impl.AuthorServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -202,6 +204,54 @@ public class AuthorControllerIntegrationTests {
                 MockMvcResultMatchers.jsonPath("$.age").value(authorEntitySecond.getAge())
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.name").value(authorEntitySecond.getName())
+        );
+    }
+
+    @Test
+    public void testThatPartialUpdatesAuthorSuccessfullyReturnsHttp200_OK() throws Exception{
+        AuthorEntity newAuthorEntity = TestDataUtil.createTestAuthor();
+        AuthorEntity savedAuthor = authorService.save(newAuthorEntity);
+
+        AuthorDto partialUpdatedAuthorDto = TestDataUtil.createTestAuthorDtoFirst();
+        partialUpdatedAuthorDto.setId(savedAuthor.getId());
+        partialUpdatedAuthorDto.setAge(null);
+        partialUpdatedAuthorDto.setName("new partial updated name");
+
+
+        String jsonAuthorDto = objectMapper.writeValueAsString(partialUpdatedAuthorDto);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.patch("/authors/" + savedAuthor.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonAuthorDto)
+        ).andExpect(
+                MockMvcResultMatchers.status().isOk()
+        );
+    }
+
+    @Test
+    public void testThatPartialUpdatesAuthorSuccessfullyReturnsCorrectBody() throws Exception{
+        AuthorEntity newAuthorEntity = TestDataUtil.createTestAuthor();
+        AuthorEntity savedAuthor = authorService.save(newAuthorEntity);
+
+        AuthorDto partialUpdatedAuthorDto = TestDataUtil.createTestAuthorDtoFirst();
+        partialUpdatedAuthorDto.setId(savedAuthor.getId());
+        partialUpdatedAuthorDto.setAge(null);
+        partialUpdatedAuthorDto.setName("new partial updated name");
+
+
+        String jsonAuthorDto = objectMapper.writeValueAsString(partialUpdatedAuthorDto);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.patch("/authors/" + savedAuthor.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonAuthorDto)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.id").value(savedAuthor.getId())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.name").value(partialUpdatedAuthorDto.getName())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.age").value(savedAuthor.getAge())
         );
     }
 }

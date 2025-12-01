@@ -154,4 +154,43 @@ public class BookControllerIntegrationTests {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.isbn").value(updatedBookDto.getIsbn()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.title").value(updatedBookDto.getTitle()));
     }
+
+    @Test
+    public void testThatPartialUpdatesBookSuccessfullyReturns200_OK() throws Exception{
+        BookEntity bookEntity = TestDataUtil.createTestBook(null);
+        BookEntity resultBookEntity = bookService.save(bookEntity, bookEntity.getIsbn());
+
+        BookDto updatedNewBook = TestDataUtil.createTestBookDtoA(null);
+        updatedNewBook.setIsbn(resultBookEntity.getIsbn());
+
+        updatedNewBook.setTitle("NEW PARTIAL UPDATED TITLE");
+        updatedNewBook.setIsbn(null);
+
+        String jsonUpdatedBook = objectMapper.writeValueAsString(updatedNewBook);
+
+        mockMvc.perform(MockMvcRequestBuilders.patch("/books/" + resultBookEntity.getIsbn())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonUpdatedBook))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+
+    }
+
+    @Test
+    public void testThatPartialUpdatesBookSuccessfullyReturnsCorrecBody() throws Exception {
+        BookEntity bookEntity = TestDataUtil.createTestBook(null);
+        BookEntity resultBookEntity = bookService.save(bookEntity, bookEntity.getIsbn());
+
+        BookDto updatedBookDto = TestDataUtil.createTestBookDtoA(null);
+        updatedBookDto.setIsbn(resultBookEntity.getIsbn());
+        updatedBookDto.setTitle("NEW PARTIAL UPDATED TITLE");
+        updatedBookDto.setIsbn(null);
+
+        String jsonUpdatedBook = objectMapper.writeValueAsString(updatedBookDto);
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/books/" + resultBookEntity.getIsbn())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonUpdatedBook))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.isbn").value(resultBookEntity.getIsbn()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.title").value(updatedBookDto.getTitle()));
+    }
 }

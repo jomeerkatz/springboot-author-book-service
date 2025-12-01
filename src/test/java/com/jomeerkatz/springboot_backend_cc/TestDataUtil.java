@@ -30,6 +30,13 @@ public final class TestDataUtil {
                 .build();
     }
 
+    public static AuthorDto createTestAuthorDtoFirst() {
+        return AuthorDto.builder()
+                .age(22)
+                .name("dto-name-1")
+                .build();
+    }
+
     public static BookEntity createTestBook(final AuthorEntity authorEntity) {
         return BookEntity.builder()
                 .isbn("isbn-123")
