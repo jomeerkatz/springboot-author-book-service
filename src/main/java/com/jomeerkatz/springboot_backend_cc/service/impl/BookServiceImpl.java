@@ -56,7 +56,10 @@ public class BookServiceImpl implements BookService {
             // there is author_id -> which also should not be updated??
             return bookRepository.save(existingBookEntity);
         }).orElseThrow(() -> new RuntimeException("book isbn doesn't exists!"));
+    }
 
-
+    @Override
+    public void deleteById(String isbn) {
+        bookRepository.deleteById(isbn);
     }
 }

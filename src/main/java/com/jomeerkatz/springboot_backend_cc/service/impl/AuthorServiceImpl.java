@@ -48,4 +48,10 @@ public class AuthorServiceImpl implements AuthorService {
             return authorRepository.save(existingAuthorEntity);
         }).orElseThrow( () -> new RuntimeException("Author id doesn't exists!"));
     }
+
+    @Override
+    public void deleteByID(Long id) {
+        // we already checked before, if the id is existing
+        authorRepository.deleteById(id);
+    }
 }

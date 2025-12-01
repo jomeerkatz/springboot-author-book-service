@@ -193,4 +193,14 @@ public class BookControllerIntegrationTests {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.isbn").value(resultBookEntity.getIsbn()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.title").value(updatedBookDto.getTitle()));
     }
+
+    @Test
+    public void testThatDeleteBookSuccessfullyReturnsHttp204() throws Exception {
+        BookEntity bookEntity = TestDataUtil.createTestBook(null);
+        BookEntity resultBookEntity = bookService.save(bookEntity, bookEntity.getIsbn());
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/books/" + resultBookEntity.getIsbn())
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(MockMvcResultMatchers.status().isNoContent());
+    }
 }

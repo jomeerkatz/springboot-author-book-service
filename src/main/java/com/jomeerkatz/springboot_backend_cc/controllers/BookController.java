@@ -4,6 +4,7 @@ import com.jomeerkatz.springboot_backend_cc.domain.dto.BookDto;
 import com.jomeerkatz.springboot_backend_cc.domain.entities.BookEntity;
 import com.jomeerkatz.springboot_backend_cc.mappers.Mapper;
 import com.jomeerkatz.springboot_backend_cc.service.impl.BookServiceImpl;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -71,6 +72,16 @@ public class BookController {
             BookEntity bookEntity = modelMapper.mapFrom(bookDto);
             BookEntity resultBookEntity = bookService.partialUpdate(isbn, bookEntity);
             return new ResponseEntity<>(modelMapper.mapTo(resultBookEntity), HttpStatus.OK);
+        }
+    }
+
+    @DeleteMapping(path = "/books/{isbn}")
+    public ResponseEntity deleteBookById(@PathVariable("isbn") String isbn) {
+        if(!bookService.isbnExists(isbn)) {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        } else {
+            bookService.deleteById(isbn);
+            return new ResponseEntity(HttpStatus.NO_CONTENT);
         }
     }
 }
